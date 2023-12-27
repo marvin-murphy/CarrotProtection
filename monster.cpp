@@ -1,46 +1,81 @@
-#include "monster.h"
+#include "Monster.h"
 
-bool Monster:: monster_init(int type)
-{
-	//创建Monster对象
-	Monster my_monster;
+extern int money;
 
-	// 创建 Sprite 对象
-	Sprite* mySprite = Sprite::create("mysprite.png");//与type有关，还未修改
+bool Monster::monster_init(int type) {
+    // 给 Monster 对象的属性赋值
+    health = 10 + 5 * type; // 设置具体的血量值
+    hit = 1 + type; // 设置具体的攻击力
+    level = 1 + type;
+    this->type = type; // 设置具体类型
+
+    // 创建 Sprite 对象（根据type选择不同的图像文件）
+    std::string spriteFileName = "mysprite" + std::to_string(type) + ".png";
+    Sprite* mySprite = Sprite::create(spriteFileName);
 
     if (mySprite) {
-        // 给 Carrot 对象的属性赋值
-        my_monster.setHealth(10 + 5 * type); // 设置具体的血量值
-        my_monster.setHit(1 + type); // 设置具体的攻击力
-        my_monster.setLevel(1 + type);   // 设置具体的等级值
-        return 0;
+        addChild(mySprite); // 将 Sprite 添加为 Monster 的子节点
+        return true;
     }
-    return 1;
+    return false;
 }
-Monster* Monster::monster_create(int type)
-{
-    Monster *my_monster = new Monster();
-    if (my_monster->monster_init(type))
-    {
+
+Monster* Monster::monster_create(int type) {
+    Monster* my_monster = new Monster();
+    if (my_monster->monster_init(type)) {
         my_monster->autorelease();
         return my_monster; // 返回创建的 Monster 对象
     }
-    else
-    {
+    else {
         delete my_monster;
-        return NULL;
+        return nullptr;
     }
 }
-bool health_decrease(int num)
-{
-    Monster my_monster;
-    int health = my_monster.getHealth();
-    health = health - num;
-    if (health < 0)
-        return 0;
-    else
-    {
-        my_monster.setHealth(health);
-        return 1;
+
+bool Monster::health_decrease(int num) {
+    int health = getHealth();
+    health -= num;
+    if (health <= 0) {
+        health = 0;
+        die(); // 调用死亡处理
     }
+    setHealth(health);
+    return health > 0;
+}
+
+void Monster::die() {
+    int type = getType();
+    money += type; // 增加金币，假设 money 是全局变量
+}
+
+int Monster::getHealth() const {
+    return health;
+}
+
+void Monster::setHealth(int value) {
+    health = value;
+}
+
+int Monster::getLevel() const {
+    return level;
+}
+
+void Monster::setLevel(int value) {
+    level = value;
+}
+
+int Monster::getType() const {
+    return type;
+}
+
+void Monster::setType(int value) {
+    type = value;
+}
+
+int Monster::getHit() const {
+    return hit;
+}
+
+void Monster::setHit(int value) {
+    hit = value;
 }

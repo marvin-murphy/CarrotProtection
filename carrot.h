@@ -3,29 +3,36 @@
 
 #include "cocos2d.h"
 
-#define CARROT_LEVEL 4
+#define CARROT_LEVEL 3
 
 USING_NS_CC;
 
 class Carrot : public cocos2d::Sprite {
 public:
-    virtual ~Carrot() {};
-
-    // 声明并生成 health 和 level 属性的 getter 和 setter 方法
-    CC_SYNTHESIZE(int, health, Health);
-    CC_SYNTHESIZE(int, level, Level);
+    Carrot(); // 构造函数
 
     // 初始化方法声明
-    bool carrot_init();
+    bool init() override;
 
-    // 静态工厂方法声明
-    Carrot* carrot_create();
+    // 生成方法声明
+    static Carrot* create();
 
     // 升级方法声明
-    bool if_upgrate(int& money);
+    bool if_upgrade();
 
     // 血量减少方法声明
     bool health_decrease(int num);
+
+    // 获取血量和等级的方法
+    int getHealth() const { return health; }
+    int getLevel() const { return level; }
+
+    CREATE_FUNC(Carrot); //Carrot* myCarrot = Carrot::create();
+
+private:
+    int health;
+    int level;
+    
 };
 
 #endif
