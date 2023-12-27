@@ -32,6 +32,7 @@ public:
 private:
     int health;
     int level;
+    std::string spriteFileName; // 存储图像文件的路径
     
 };
 

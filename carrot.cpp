@@ -4,11 +4,19 @@ extern int money;
 
 Carrot::Carrot() : health(0), level(0) {
     // 构造函数，不要在这里进行初始化
+    spriteFileName = "mysprite.png"; // 默认图像文件路径
 }
 
 bool Carrot::init() {
     if (!Sprite::init()) {
         return false;
+    }
+    // 使用加载的图像文件创建 Sprite 对象
+    if (!spriteFileName.empty()) {
+        Sprite* mySprite = Sprite::create(spriteFileName);
+        if (mySprite) {
+            addChild(mySprite); // 将 Sprite 添加为 Carrot 的子节点
+        }
     }
 
     // 在这里进行对象的初始化工作
@@ -25,7 +33,7 @@ Carrot* Carrot::create() {
         return mycarrot; // 返回创建的 Carrot 对象
     }
     else {
-        delete mycarrot;
+        CC_SAFE_DELETE(mycarrot);
         return nullptr;
     }
 }

@@ -27,7 +27,7 @@ Monster* Monster::monster_create(int type) {
         return my_monster; // 返回创建的 Monster 对象
     }
     else {
-        delete my_monster;
+        CC_SAFE_DELETE(my_monster);
         return nullptr;
     }
 }
