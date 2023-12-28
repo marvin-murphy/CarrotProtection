@@ -33,8 +33,6 @@ public:
 
     void updateSpriteFileName();
 
-    CREATE_FUNC(Carrot); //Carrot* myCarrot = Carrot::create();
-
 private:
     int health;
     int level;

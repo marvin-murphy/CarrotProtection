@@ -14,7 +14,7 @@ bool Monster::monster_init(int type) {
     Sprite* mySprite = Sprite::create(spriteFileName);
 
     // 设置 Sprite 的位置等属性（根据实际需求进行调整）
-    setPosition(Vec2(0, 0));  // 设置位置
+    setPosition(Vec2(135, 135));  // 设置位置
 
     if (mySprite) {
         addChild(mySprite); // 将 Sprite 添加为 Monster 的子节点
@@ -23,10 +23,15 @@ bool Monster::monster_init(int type) {
     return false;
 }
 
-Monster* Monster::monster_create(int type) {
-    Monster* my_monster = new Monster();
+Monster* Monster::monster_create(int type, std::vector<Monster*>* monstersContainer) {
+    // 在创建Monster时，传递monstersContainer
+    Monster* my_monster = new Monster(monstersContainer);
     if (my_monster->monster_init(type)) {
         my_monster->autorelease();
+        // 如果有必要，可以在这里将怪物添加到容器中
+        if (monstersContainer) {
+            monstersContainer->push_back(my_monster);
+        }
         return my_monster; // 返回创建的 Monster 对象
     }
     else {
@@ -47,8 +52,22 @@ bool Monster::health_decrease(int num) {
 }
 
 void Monster::die() {
+
+    // 确保有有效的容器指针
+    if (monstersPtr) {
+        auto& container = *monstersPtr;  // 解引用以简化访问
+        auto it = std::find(container.begin(), container.end(), this);
+        if (it != container.end()) {
+            container.erase(it);  // 从容器中删除自己
+        }
+    }
+
+    // 执行其他清理工作...
+    this->stopAllActions();
+    this->removeFromParentAndCleanup(true);
+
     int type = getType();
-    money += type; // 增加金币，假设 money 是全局变量
+    money += 10 * type; // 增加金币，假设 money 是全局变量
 }
 
 int Monster::getHealth() const {

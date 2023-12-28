@@ -16,7 +16,7 @@ bool Carrot::init() {
         Sprite* mySprite = Sprite::create(spriteFileName);
 
         // 设置 Sprite 的位置等属性（根据实际需求进行调整）
-        setPosition(Vec2(0, 0));  // 设置位置
+        setPosition(Vec2(1045, 135));  // 设置位置
 
         if (mySprite) {
             mySprite->setName(spriteFileName); // 设置子节点的名字与图片名字相同

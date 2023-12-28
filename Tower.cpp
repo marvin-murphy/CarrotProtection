@@ -2,7 +2,7 @@
 
 extern int money;
 
-bool Tower ::Tower_init(int type)
+bool Tower ::Tower_init(int type, const cocos2d::Vec2& touchlocation)
 {
 	level = 1;
 	attack_damage = 2;
@@ -15,7 +15,7 @@ bool Tower ::Tower_init(int type)
     Sprite* mySprite = Sprite::create(spriteFileName);
 
     // 设置 Sprite 的位置等属性（根据实际需求进行调整）
-    setPosition(Vec2(0, 0));  // 设置位置
+    setPosition(touchlocation);  // 设置位置
 
     if (mySprite) {
         addChild(mySprite); // 将 Sprite 添加为 Tower 的子节点
@@ -23,12 +23,15 @@ bool Tower ::Tower_init(int type)
     }
     return false;
 }
-Tower* Tower::Tower_create(int type)
-{
-    Tower* my_Tower = new Tower();
-    if (my_Tower->Tower_init(type)) {
+Tower* Tower::Tower_create(int type, const cocos2d::Vec2& touchlocation, std::vector<Tower*>* towersContainer) {
+    Tower* my_Tower = new Tower(towersContainer);
+    if (my_Tower->Tower_init(type, touchlocation)) {
         my_Tower->autorelease();
-        return my_Tower; // 返回创建的 Tower 对象
+        // 如果需要，可以在这里将塔添加到容器中
+        if (towersContainer) {
+            towersContainer->push_back(my_Tower);
+        }
+        return my_Tower;
     }
     else {
         CC_SAFE_DELETE(my_Tower);
@@ -74,6 +77,14 @@ void Tower::removeTower()
     // 从父节点中移除炮塔节点，并释放内存
     removeFromParentAndCleanup(true);
 
+    // 从容器中移除自己
+    if (towersPtr) {
+        auto& container = *towersPtr;
+        auto it = std::find(container.begin(), container.end(), this);
+        if (it != container.end()) {
+            container.erase(it);
+        }
+    }
     // 可以添加其他清理逻辑，比如额外的资源释放等
 }
 

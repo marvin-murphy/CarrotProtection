@@ -20,18 +20,20 @@ private:
 	int attack_speed;//攻击速度
 
 	std::string spriteFileName; // 存储图像文件的路径
+
+	std::vector<Tower*>* towersPtr;  // 指向包含所有Tower的容器的指针
 public:
-	Tower() :level(1), type(1), attack_damage(2), attack_range(100), slow_level(0), attack_speed(1) {}
+	Tower(std::vector<Tower*>* towers) : towersPtr(towers), level(1), type(1), attack_damage(2), attack_range(100), slow_level(0), attack_speed(1) {}
 	virtual ~Tower()
 	{
 		// 在此添加可能需要释放的资源或其他清理操作
 	}
 
 	// 初始化方法声明
-	bool Tower_init(int type);
+	bool Tower_init(int type, const cocos2d::Vec2& touchlocation);
 
 	// 生成方法声明
-	static Tower* Tower_create(int type);
+	static Tower* Tower_create(int type, const cocos2d::Vec2& touchlocation, std::vector<Tower*>* towersContainer);
 
 	//删除防御塔
 	void removeTower();
@@ -45,8 +47,13 @@ public:
 	//调整防御塔角度，对准最近攻击目标
 	void rotateToTarget(Node* target);
 
-	CREATE_FUNC(Tower);//Tower* myTower = Tower::create(type);
-
 };
 #endif
+//外部创建
+/*std::vector<Tower*> towersContainer;
+
+// 假设有触摸位置touchlocation和类型type
+Tower* newTower = Tower::Tower_create(type, touchlocation, &towersContainer);
+// 进行其他操作...
+*/
 

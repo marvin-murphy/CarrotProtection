@@ -1,4 +1,4 @@
-#ifndef _PATH_H_
+/*#ifndef _PATH_H_
 #define _PATH_H_
 #include "cocos2d.h"
 
@@ -17,4 +17,5 @@ private:
     std::vector<PathPoint> pathPoints; // 用于存储路径点的容器
 };
 #endif
+*/
 
