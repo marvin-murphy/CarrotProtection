@@ -8,7 +8,7 @@ USING_NS_CC;
 class Monster : public cocos2d::Sprite {
 public:
     // Monster类构造函数
-    Monster(std::vector<Monster*>* monsters) : monstersPtr(monsters), health(15), level(1), type(1), hit(1) {}
+    Monster(std::vector<Monster*>* monsters) : monstersPtr(monsters), health(15), level(1), type(1), hit(1),x(0),y(0){}
 
     // 初始化方法声明
     bool monster_init(int type);
@@ -49,11 +49,35 @@ public:
 
     void die();
 
+    // 移动函数
+    void moveLeft(float duration);
+    void moveRight(float duration);
+    void moveUp(float duration);
+    void moveDown(float duration);
+    void startMoving(int speed);
+    void updatePosition();
+    int getX() const {
+        return x;
+    }
+
+    void setX(int value) {
+        x = value;
+    }
+    int getY() const {
+        return y;
+    }
+
+    void setY(int value) {
+        y = value;
+    }
+
 private:
     int health;
     int level;
     int type;
     int hit;
+    int x;
+    int y;
     std::vector<Monster*>* monstersPtr;
 };
 

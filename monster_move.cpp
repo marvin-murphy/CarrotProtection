@@ -1,5 +1,4 @@
-#include "monster_move.h"
-#include "path.h"
+/*#include "monster_move.h"
 
 bool monster_move::init() {
     if (!Monster::init()) {
@@ -61,6 +60,7 @@ void monster_move::startMoving(int speed) {
         // 使用 Cocos2d-x 的动作来实现移动，如 MoveTo、MoveBy 等
     }
 }*/
+/*
 void monster_move::moveLeft(float duration) {
     auto moveBy = MoveBy::create(duration, Vec2(-10, 0)); // 向左移动
     auto sequence = Sequence::create(moveBy, CallFunc::create(CC_CALLBACK_0(monster_move::updatePosition, this)), nullptr);
@@ -84,5 +84,6 @@ void monster_move::moveDown(float duration) {
     auto sequence = Sequence::create(moveBy, CallFunc::create(CC_CALLBACK_0(monster_move::updatePosition, this)), nullptr);
     this->runAction(sequence);
 }
+*/
 
 
