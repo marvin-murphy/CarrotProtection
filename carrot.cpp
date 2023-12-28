@@ -14,6 +14,10 @@ bool Carrot::init() {
     // 使用加载的图像文件创建 Sprite 对象
     if (!spriteFileName.empty()) {
         Sprite* mySprite = Sprite::create(spriteFileName);
+
+        // 设置 Sprite 的位置等属性（根据实际需求进行调整）
+        setPosition(Vec2(0, 0));  // 设置位置
+
         if (mySprite) {
             mySprite->setName(spriteFileName); // 设置子节点的名字与图片名字相同
             addChild(mySprite); // 将 Sprite 添加为 Carrot 的子节点
@@ -42,8 +46,8 @@ Carrot* Carrot::create() {
 
 bool Carrot::if_upgrade() {
     
-    if (money - 20 * level >= 0 && level < CARROT_LEVEL) {
-        money -= 20 * level;
+    if (money - 100 * level >= 0 && level < CARROT_LEVEL) {
+        money -= 100 * level;
         level++;
         health += 5;
         // 升级后调用更新函数来更新纹理

@@ -7,6 +7,7 @@ USING_NS_CC;
 
 class Monster : public cocos2d::Sprite {
 public:
+    Monster():health(15),level(1),type(1),hit(1){}
     // 初始化方法声明
     bool monster_init(int type);
 

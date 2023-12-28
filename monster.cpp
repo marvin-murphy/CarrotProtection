@@ -13,6 +13,9 @@ bool Monster::monster_init(int type) {
     std::string spriteFileName = "monster" + std::to_string(type) + ".png";
     Sprite* mySprite = Sprite::create(spriteFileName);
 
+    // 设置 Sprite 的位置等属性（根据实际需求进行调整）
+    setPosition(Vec2(0, 0));  // 设置位置
+
     if (mySprite) {
         addChild(mySprite); // 将 Sprite 添加为 Monster 的子节点
         return true;

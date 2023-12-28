@@ -22,7 +22,7 @@ void monster_move::updatePosition() {
     // 可以在这里打印出或者以其他方式使用新的坐标
 }
 void monster_move::startMoving(int speed) {
-    
+
     float speedFactor = 1.2f - 0.2f * speed;
 
     // 限制 speedFactor 的取值在 0.2 到 1.2 之间
@@ -38,7 +38,7 @@ void monster_move::startMoving(int speed) {
     auto move5 = MoveBy::create(2 / speedFactor, Vec2(190, 0)); // 从(855,135)到(1045,135)
 
     // 将所有动作串联成一个序列
-    auto sequence = Sequence::create(move1,move2,move3,move4,move5,
+    auto sequence = Sequence::create(move1, move2, move3, move4, move5,
         CallFunc::create(CC_CALLBACK_0(monster_move::updatePosition, this)),
         nullptr);
 
