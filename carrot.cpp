@@ -4,7 +4,7 @@ extern int money;
 
 Carrot::Carrot() : health(0), level(0) {
     // 构造函数，不要在这里进行初始化
-    spriteFileName = "mysprite.png"; // 默认图像文件路径
+    spriteFileName = "carrot_10.png"; // 默认图像文件路径
 }
 
 bool Carrot::init() {
@@ -15,9 +15,11 @@ bool Carrot::init() {
     if (!spriteFileName.empty()) {
         Sprite* mySprite = Sprite::create(spriteFileName);
         if (mySprite) {
+            mySprite->setName(spriteFileName); // 设置子节点的名字与图片名字相同
             addChild(mySprite); // 将 Sprite 添加为 Carrot 的子节点
         }
     }
+
 
     // 在这里进行对象的初始化工作
     health = 10; // 初始化血量为10
@@ -44,6 +46,8 @@ bool Carrot::if_upgrade() {
         money -= 20 * level;
         level++;
         health += 5;
+        // 升级后调用更新函数来更新纹理
+        updateSpriteFileName();
         return true;
     }
     return false;
@@ -54,8 +58,46 @@ bool Carrot::health_decrease(int num) {
         return false;
     else {
         health -= num;
+
+        // 调用更新函数来更新纹理
+        updateSpriteFileName();
+
         return true;
     }
 }
+
+void Carrot::updateSpriteFileName() {
+    // 计算血量级别
+    int healthLevel = std::min((health / 1) + 1, 10); // 以1为一个级别的基数，限制在小于等于10
+
+
+    // 构造新的图片文件路径
+    std::string newSpriteFileName = "carrot_" + std::to_string(healthLevel) + ".png";
+
+    // 如果新路径和旧路径不同，才进行更新
+    if (newSpriteFileName != spriteFileName) {
+        // 获取名为 spriteFileName 的子节点
+        Sprite* mySprite = dynamic_cast<Sprite*>(getChildByName(spriteFileName));
+
+        // 如果存在，就将其移除
+        if (mySprite) {
+            removeChild(mySprite,true);
+        }
+
+        // 设置新的图片文件路径
+        spriteFileName = newSpriteFileName;
+
+        // 创建新的 Sprite 对象
+        mySprite = Sprite::create(spriteFileName);
+
+        // 将 Sprite 添加为 Carrot 的子节点
+        if (mySprite) {
+            mySprite->setName(spriteFileName); // 设置子节点的名字与图片名字相同
+            addChild(mySprite);
+        }
+    }
+}
+
+
 
 

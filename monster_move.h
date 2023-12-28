@@ -8,13 +8,14 @@ class monster_move : public Monster {
 public:
     monster_move() : x(0), y(0) {}
     bool init() override;
-    void move(path* path); // 添加移动方法
+    //void move(path* path); // 添加移动方法
+    
     // 移动函数
     void moveLeft(float duration);
     void moveRight(float duration);
     void moveUp(float duration);
     void moveDown(float duration);
-    void startMoving();
+    void startMoving(int speed);
     void updatePosition();
     int monster_move::getX() const {
         return x;

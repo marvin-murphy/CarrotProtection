@@ -11,6 +11,10 @@ class Carrot : public cocos2d::Sprite {
 public:
     Carrot(); // 构造函数
 
+    virtual ~Carrot() {
+        // 在这里释放可能的动态分配的资源
+    }
+
     // 初始化方法声明
     bool init() override;
 
@@ -26,6 +30,8 @@ public:
     // 获取血量和等级的方法
     int getHealth() const { return health; }
     int getLevel() const { return level; }
+
+    void updateSpriteFileName();
 
     CREATE_FUNC(Carrot); //Carrot* myCarrot = Carrot::create();
 

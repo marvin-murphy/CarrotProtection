@@ -10,7 +10,7 @@ bool Monster::monster_init(int type) {
     this->type = type; // 设置具体类型
 
     // 创建 Sprite 对象（根据type选择不同的图像文件）
-    std::string spriteFileName = "mysprite" + std::to_string(type) + ".png";
+    std::string spriteFileName = "monster" + std::to_string(type) + ".png";
     Sprite* mySprite = Sprite::create(spriteFileName);
 
     if (mySprite) {
