@@ -14,7 +14,7 @@ bool Monster::monster_init(int type) {
     Sprite* mySprite = Sprite::create(spriteFileName);
 
     // 设置 Sprite 的位置等属性（根据实际需求进行调整）
-    setPosition(Vec2(135, 135));  // 设置位置
+    setPosition(Vec2(180, 510));  // 设置位置
 
     if (mySprite) {
         addChild(mySprite); // 将 Sprite 添加为 Monster 的子节点
@@ -23,9 +23,9 @@ bool Monster::monster_init(int type) {
     return false;
 }
 
-Monster* Monster::monster_create(int type, std::vector<Monster*>* monstersContainer) {
+Monster* Monster::monster_create(int type,Carrot*carrot, std::vector<Monster*>* monstersContainer) {
     // 在创建Monster时，传递monstersContainer
-    Monster* my_monster = new Monster(monstersContainer);
+    Monster* my_monster = new Monster(monstersContainer, carrot);
     if (my_monster->monster_init(type)) {
         my_monster->autorelease();
         // 如果有必要，可以在这里将怪物添加到容器中
@@ -51,8 +51,40 @@ bool Monster::health_decrease(int num) {
     return health > 0;
 }
 
+void Monster::onReachedDestination() {
+    // 减少萝卜的生命值
+    if (carrotPtr) {
+        bool alive = carrotPtr->health_decrease(hit);
+
+        if (!alive) {
+            // 如果萝卜生命值耗尽，执行游戏结束逻辑
+        }
+    }
+
+    // 怪物到达终点后自我销毁
+    this->die();
+}
+
 void Monster::die() {
 
+    // 创建并显示击杀效果
+    cocos2d::Sprite* hitEffect = cocos2d::Sprite::create("monster_die.png");
+    if (hitEffect) {
+        hitEffect->setPosition(this->getPosition()); // 设置为子弹击中的位置
+        this->getParent()->addChild(hitEffect);
+
+        // 设置淡出时间
+        float duration = 0.5f;
+
+        // 创建淡出动作并在完成后删除精灵
+        auto fadeOutAndRemove = cocos2d::Sequence::create(
+            cocos2d::FadeOut::create(duration), // 淡出动作
+            cocos2d::RemoveSelf::create(),      // 完成后删除自己
+            nullptr);
+
+        // 运行动作
+        hitEffect->runAction(fadeOutAndRemove);
+    }
     // 确保有有效的容器指针
     if (monstersPtr) {
         auto& container = *monstersPtr;  // 解引用以简化访问
@@ -70,7 +102,7 @@ void Monster::die() {
     money += 10 * type; // 增加金币，假设 money 是全局变量
 }
 
-void Monster::updatePosition() {
+/*void Monster::updatePosition() {
     // 获取当前精灵的位置
     Vec2 currentPosition = this->getPosition();
 
@@ -80,35 +112,35 @@ void Monster::updatePosition() {
 
     // 可以在这里打印出或者以其他方式使用新的坐标
 }
+*/
 void Monster::startMoving(int speed) {
-
     float speedFactor = 1.2f - 0.2f * speed;
 
     // 限制 speedFactor 的取值在 0.2 到 1.2 之间
     speedFactor = std::max(0.4f, std::min(1.2f, speedFactor));
 
-    // 假设monster的起始位置已经在 (135, 135)
-    // 创建一个动作序列，按路径点依次移动
+    // 设置初始位置
+    this->setPosition(Vec2(180, 510)); // 设置monster的起始位置
 
-    auto move1 = MoveBy::create(2 / speedFactor, Vec2(180, 0));// 从(135,135)到(315,135)
-    auto move2 = MoveBy::create(4 / speedFactor, Vec2(0, 370)); // 从(315,135)到(315,505)
-    auto move3 = MoveBy::create(6 / speedFactor, Vec2(540, 0));// 从(315,505)到(855,505)
-    auto move4 = MoveBy::create(4 / speedFactor, Vec2(0, -370)); // 从(855,505)到(855,135)
-    auto move5 = MoveBy::create(2 / speedFactor, Vec2(190, 0)); // 从(855,135)到(1045,135)
+    // 创建一个动作序列，按照新的路径点移动
+    auto move1 = MoveTo::create(2 / speedFactor, Vec2(330, 510)); // 到拐点1
+    auto move2 = MoveTo::create(4 / speedFactor, Vec2(330, 210)); // 到拐点2
+    auto move3 = MoveTo::create(6 / speedFactor, Vec2(780, 210)); // 到拐点3
+    auto move4 = MoveTo::create(4 / speedFactor, Vec2(780, 510)); // 到拐点4
+    auto move5 = MoveTo::create(2 / speedFactor, Vec2(930, 510)); // 到终点
 
-    // 将所有动作串联成一个序列
-    auto sequence = Sequence::create(move1, move2, move3, move4, move5,
-        CallFunc::create(CC_CALLBACK_0(Monster::updatePosition, this)),
-        nullptr);
+    // 最后一个移动动作后的回调
+    auto callback = CallFunc::create(CC_CALLBACK_0(Monster::onReachedDestination, this));
+
+    // 将所有动作和回调串联成一个序列
+    auto sequence = Sequence::create(move1, move2, move3, move4, move5, callback, nullptr);
 
     // 执行动作序列
     this->runAction(sequence);
-    //外部调用方法
-    // 调用startMoving函数，开始移动怪物
-    //myMonster->startMoving();
 }
 
-void Monster::moveLeft(float duration) {
+
+/*void Monster::moveLeft(float duration) {
     auto moveBy = MoveBy::create(duration, Vec2(-10, 0)); // 向左移动
     auto sequence = Sequence::create(moveBy, CallFunc::create(CC_CALLBACK_0(Monster::updatePosition, this)), nullptr);
     this->runAction(sequence);
@@ -131,6 +163,7 @@ void Monster::moveDown(float duration) {
     auto sequence = Sequence::create(moveBy, CallFunc::create(CC_CALLBACK_0(Monster::updatePosition, this)), nullptr);
     this->runAction(sequence);
 }
+*/
 int Monster::getHealth() const {
     return health;
 }

@@ -33,10 +33,13 @@ public:
 
     void updateSpriteFileName();
 
+    void updateHealthLabel(); // 更新血量标签的文本
+
 private:
     int health;
     int level;
     std::string spriteFileName; // 存储图像文件的路径
+    cocos2d::Label* healthLabel; // 用于显示血量的标签
     
 };
 

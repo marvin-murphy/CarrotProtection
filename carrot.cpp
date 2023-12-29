@@ -4,6 +4,12 @@ extern int money;
 
 Carrot::Carrot() : health(0), level(0) {
     // 构造函数，不要在这里进行初始化
+    std::string initialLabelText = "health: " + std::to_string(health);
+    healthLabel = cocos2d::Label::createWithSystemFont(initialLabelText, "Arial", 24);
+    if (healthLabel) {
+        healthLabel->setPosition(Vec2(930, 560));
+        this->addChild(healthLabel);
+    }
     spriteFileName = "carrot_10.png"; // 默认图像文件路径
 }
 
@@ -16,7 +22,7 @@ bool Carrot::init() {
         Sprite* mySprite = Sprite::create(spriteFileName);
 
         // 设置 Sprite 的位置等属性（根据实际需求进行调整）
-        setPosition(Vec2(1045, 135));  // 设置位置
+        setPosition(Vec2(930, 510));  // 设置位置
 
         if (mySprite) {
             mySprite->setName(spriteFileName); // 设置子节点的名字与图片名字相同
@@ -44,6 +50,14 @@ Carrot* Carrot::create() {
     }
 }
 
+void Carrot::updateHealthLabel() {
+    if (healthLabel) {
+        std::string labelText = "health: " + std::to_string(health);
+        healthLabel->setString(labelText);
+        // 更新标签文本为当前血量
+    }
+}
+
 bool Carrot::if_upgrade() {
     
     if (money - 100 * level >= 0 && level < CARROT_LEVEL) {
@@ -52,6 +66,7 @@ bool Carrot::if_upgrade() {
         health += 5;
         // 升级后调用更新函数来更新纹理
         updateSpriteFileName();
+        updateHealthLabel(); // 更新血量标签
         return true;
     }
     return false;
@@ -65,6 +80,7 @@ bool Carrot::health_decrease(int num) {
 
         // 调用更新函数来更新纹理
         updateSpriteFileName();
+        updateHealthLabel(); // 更新血量标签
 
         return true;
     }

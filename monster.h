@@ -2,26 +2,39 @@
 #define MY_MONSTER_H
 
 #include "cocos2d.h"
+#include "Carrot.h"
+
 
 USING_NS_CC;
 
-class Monster : public cocos2d::Sprite {
+class Monster : public cocos2d::Sprite 
+{
 public:
     // Monster类构造函数
-    Monster(std::vector<Monster*>* monsters) : monstersPtr(monsters), health(15), level(1), type(1), hit(1),x(0),y(0){}
+    Monster(std::vector<Monster*>* monsters, Carrot* targetCarrot)
+        : monstersPtr(monsters), carrotPtr(targetCarrot), health(15), level(1), type(1), hit(1) {
+        // 其他初始化代码
+    }
 
     // 初始化方法声明
     bool monster_init(int type);
 
     // 生成方法声明
-    Monster* Monster::monster_create(int type, std::vector<Monster*>* monstersContainer);
+    Monster* monster_create(int type, Carrot* carrot, std::vector<Monster*>* monstersContainer);
 
     void setMonstersContainer(std::vector<Monster*>* monsters) {
         monstersPtr = monsters;
     }
 
+    void onReachedDestination();
+
     // 血量减少方法声明
     bool health_decrease(int num);
+
+    bool Monster::isAlive() const {
+        return health > 0;
+    }
+
 
     // 获取血量的方法
     int getHealth() const;
@@ -50,35 +63,36 @@ public:
     void die();
 
     // 移动函数
-    void moveLeft(float duration);
-    void moveRight(float duration);
-    void moveUp(float duration);
-    void moveDown(float duration);
+    //void moveLeft(float duration);
+    //void moveRight(float duration);
+    //void moveUp(float duration);
+    //void moveDown(float duration);
     void startMoving(int speed);
-    void updatePosition();
-    int getX() const {
-        return x;
-    }
+    //void updatePosition();
+   // int getX() const {
+   //     return x;
+   // }
 
-    void setX(int value) {
-        x = value;
-    }
-    int getY() const {
-        return y;
-    }
+    //void setX(int value) {
+    //    x = value;
+   // }
+   // int getY() const {
+    //    return y;
+   // }
 
-    void setY(int value) {
-        y = value;
-    }
+    //void setY(int value) {
+   //     y = value;
+   // }
 
 private:
     int health;
     int level;
     int type;
     int hit;
-    int x;
-    int y;
-    std::vector<Monster*>* monstersPtr;
+   // int x;
+   // int y;
+    std::vector<Monster*>* monstersPtr;// 指向怪物容器的指针
+    Carrot* carrotPtr;                   // 指向Carrot对象的指针
 };
 
 #endif

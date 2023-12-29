@@ -38,40 +38,38 @@ Tower* Tower::Tower_create(int type, const cocos2d::Vec2& touchlocation, std::ve
         return nullptr;
     }
 }
+
+void Tower::shootBulletAtMonster(Monster* target) {
+    // 获取塔和目标的位置
+    cocos2d::Vec2 startPosition = this->getPosition();
+    cocos2d::Vec2 targetPosition = target->getPosition();
+
+    // 定义子弹的其他属性，比如图像、伤害、速度等
+    // 使用字符串拼接
+        std::string spriteFileName = "bullet_" + std::to_string(type) + "_" + std::to_string(level) + ".png";
+    int damage = this->attack_damage; // 使用塔的攻击伤害
+    float speed = 200.0 * attack_speed; // 子弹速度，可以根据塔的属性调整
+
+    // 使用Bullet::create创建子弹
+    Bullet* bullet = Bullet::create(startPosition, target, spriteFileName, damage, speed, &bullets);
+    if (bullet) {
+        // 将子弹添加到游戏世界中
+        this->getParent()->addChild(bullet);
+        // 启动子弹的其他逻辑或动画
+        bullet->startMoving(targetPosition, speed);
+    }
+}
+
 void Tower::removeTower()
 {
-    // 通过名字获取 Sprite 对象
-    Sprite* mySprite = dynamic_cast<Sprite*>(getChildByName(spriteFileName));
-
-    // 从文件名中提取 type 和 level
-    int type = -1; // 初始化为一个无效值
-    int level = -1; // 初始化为一个无效值
 
     // 可以在删除节点之前先释放与炮塔相关的资源
+    Sprite* mySprite = dynamic_cast<Sprite*>(this); // 假设this就是Sprite对象
     if (mySprite)
     {
-        // 获取文件名
-        std::string fileName = mySprite->getTexture()->getPath();
-
-        // 解析文件名，假设文件名格式为 "tower{type}_{level}.png"
-        size_t startPos = fileName.find("tower") + 5; // 找到 "tower" 后的位置
-        size_t endPos = fileName.find("_"); // 找到 "_" 的位置
-        if (startPos != std::string::npos && endPos != std::string::npos)
-        {
-            // 从字符串中提取 type
-            type = std::stoi(fileName.substr(startPos, endPos - startPos));
-
-            // 从字符串中提取 level
-            startPos = endPos + 1;
-            endPos = fileName.find(".png");
-            if (startPos != std::string::npos && endPos != std::string::npos)
-            {
-                level = std::stoi(fileName.substr(startPos, endPos - startPos));
-            }
-        }
+        // 计算并添加金币，假设 money 是全局变量或某种形式的资源管理器中的变量
         money += 0.6 * (20 * type + 140 * level + 20 * level * level);
-        mySprite->removeFromParentAndCleanup(true);
-        mySprite = nullptr; // 将指针置为 nullptr，防止悬空指针
+        mySprite->removeFromParentAndCleanup(true); // 删除并清理
     }
 
     // 从父节点中移除炮塔节点，并释放内存
@@ -87,6 +85,14 @@ void Tower::removeTower()
     }
     // 可以添加其他清理逻辑，比如额外的资源释放等
 }
+/*
+// 创建一个Tower对象
+Tower* myTower = new Tower(); // 或者任何创建Tower对象的方式
+
+// 在某个事件或条件触发时
+// 例如，玩家选择卖出塔或游戏需要清理塔
+myTower->removeTower();  // 调用removeTower方法
+*/
 
 Node* Tower::getNearestTarget(Vector<Node*>& possibleTargets)
 {
@@ -191,3 +197,25 @@ void Tower::rotateToTarget(Node* target)
         runAction(rotateAction);
     }
 }
+
+/*
+void Tower::extractTypeInfo() {
+    // 获取文件名
+    std::string fileName = this->getTexture()->getPath();
+
+    // 解析文件名，假设文件名格式为 "tower{type}_{level}.png"
+    size_t startPos = fileName.find("tower") + 5; // 找到 "tower" 后的位置
+    size_t endPos = fileName.find("_"); // 找到 "_" 的位置
+    if (startPos != std::string::npos && endPos != std::string::npos) {
+        // 从字符串中提取 type
+        type = std::stoi(fileName.substr(startPos, endPos - startPos));
+
+        // 从字符串中提取 level
+        startPos = endPos + 1;
+        endPos = fileName.find(".png");
+        if (startPos != std::string::npos && endPos != std::string::npos) {
+            level = std::stoi(fileName.substr(startPos, endPos - startPos));
+        }
+    }
+}
+*/
