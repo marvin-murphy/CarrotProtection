@@ -85,6 +85,8 @@ void Monster::die() {
         // 运行动作
         hitEffect->runAction(fadeOutAndRemove);
     }
+    state = State::Dead; // 更新状态
+
     // 确保有有效的容器指针
     if (monstersPtr) {
         auto& container = *monstersPtr;  // 解引用以简化访问
@@ -97,6 +99,7 @@ void Monster::die() {
     // 执行其他清理工作...
     this->stopAllActions();
     this->removeFromParentAndCleanup(true);
+    parentLayer->notifyMonsterDeath();
 
     int type = getType();
     money += 10 * type; // 增加金币，假设 money 是全局变量
@@ -137,6 +140,22 @@ void Monster::startMoving(int speed) {
 
     // 执行动作序列
     this->runAction(sequence);
+}
+
+void Monster::updateHealthLabel() {
+    if (healthLabel) {
+        std::string labelText = "Health: " + std::to_string(health);
+        healthLabel->setString(labelText); // 更新标签文本为当前血量
+    }
+}
+
+void Monster::update(float dt) {
+    // 调用父类的update方法
+    cocos2d::Sprite::update(dt);
+
+    // 在这里可以添加额外的逻辑，如果有必要的话
+
+    // 比如，如果怪物的移动方式使得标签需要特别调整位置，可以在这里实现
 }
 
 

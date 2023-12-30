@@ -2,42 +2,41 @@
 
 extern int money;
 
-bool Tower ::Tower_init(int type, const cocos2d::Vec2& touchlocation)
-{
-	level = 1;
-	attack_damage = 2;
-	attack_range = 100;
-	attack_speed = 1;
+
+bool Tower::Tower_init(int type, const cocos2d::Vec2& touchlocation) {
+    level = 1;
+    attack_damage = 2;
+    attack_range = 100;
+    attack_speed = 1;
     slow_level = (type == 1) ? 1 : 2;
 
-    // 创建 Sprite 对象（根据type选择不同的图像文件）
-    std::string spriteFileName = "tower" + std::to_string(type) + "_" + std::to_string(level) + ".png";
+    spriteFileName = "tower" + std::to_string(type) + "_" + std::to_string(level) + ".png";
     Sprite* mySprite = Sprite::create(spriteFileName);
-
-    // 设置 Sprite 的位置等属性（根据实际需求进行调整）
-    setPosition(touchlocation);  // 设置位置
+    setPosition(touchlocation);
 
     if (mySprite) {
-        addChild(mySprite); // 将 Sprite 添加为 Tower 的子节点
+        addChild(mySprite);
         return true;
     }
     return false;
 }
-Tower* Tower::Tower_create(int type, const cocos2d::Vec2& touchlocation, std::vector<Tower*>* towersContainer) {
-    Tower* my_Tower = new Tower(towersContainer);
-    if (my_Tower->Tower_init(type, touchlocation)) {
-        my_Tower->autorelease();
-        // 如果需要，可以在这里将塔添加到容器中
+
+
+Tower* Tower::Tower_create(int type, const cocos2d::Vec2& touchlocation, std::vector<Monster*>* monstersContainer, std::vector<Tower*>* towersContainer) {
+    Tower* myTower = new Tower(monstersContainer, towersContainer);
+    if (myTower && myTower->Tower_init(type, touchlocation)) {
+        myTower->autorelease();
         if (towersContainer) {
-            towersContainer->push_back(my_Tower);
+            towersContainer->push_back(myTower);
         }
-        return my_Tower;
+        return myTower;
     }
     else {
-        CC_SAFE_DELETE(my_Tower);
+        CC_SAFE_DELETE(myTower);
         return nullptr;
     }
 }
+
 
 void Tower::shootBulletAtMonster(Monster* target) {
     // 获取塔和目标的位置
@@ -94,35 +93,28 @@ Tower* myTower = new Tower(); // 或者任何创建Tower对象的方式
 myTower->removeTower();  // 调用removeTower方法
 */
 
-Node* Tower::getNearestTarget(Vector<Node*>& possibleTargets)
-{
-    Node* nearestTarget = nullptr;
+Monster* Tower::getNearestTarget(std::vector<Monster*>& monsters) {
+    Monster* nearestTarget = nullptr;
     float nearestDistance = std::numeric_limits<float>::max();
-    
-    //当执行for (Node* target : possibleTargets)时，
-    //这个循环在内部使用了possibleTargets的迭代器来遍历所有的元素。
-    //范围基于的for循环是C++11引入的，它抽象了迭代器的复杂性，使得代码更清晰易读，
-    //但实质上它是通过迭代器来访问和遍历容器的。
-    for (Node* target : possibleTargets)
-    {
-        // 计算炮塔到目标的距离
+
+    for (Monster* target : monsters) {
         float distance = getPosition().distance(target->getPosition());
 
-        // 检查目标是否在攻击范围内
-        if (distance <= attack_range)
-        {
-            // 更新最近目标
-            if (distance < nearestDistance)
-            {
-                nearestDistance = distance;
-                nearestTarget = target;
-            }
+        if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestTarget = target;
         }
     }
 
     return nearestTarget;
 }
 
+
+
+//当执行for (Node* target : possibleTargets)时，
+    //这个循环在内部使用了possibleTargets的迭代器来遍历所有的元素。
+    //范围基于的for循环是C++11引入的，它抽象了迭代器的复杂性，使得代码更清晰易读，
+    //但实质上它是通过迭代器来访问和遍历容器的。
 //getNearestTarget函数调用示例
 /*
 // 创建一个 Vector 对象
@@ -197,6 +189,27 @@ void Tower::rotateToTarget(Node* target)
         runAction(rotateAction);
     }
 }
+
+void Tower::updateTower(float dt) {
+    // 更新自上次攻击以来经过的时间
+    timeSinceLastAttack += dt;
+
+    if (monstersPtr && !monstersPtr->empty() && timeSinceLastAttack >= attackInterval) {
+        // 获取最近的目标
+        Monster* nearestTarget = dynamic_cast<Monster*>(getNearestTarget(*monstersPtr));
+
+        // 如果存在最近的目标，旋转并攻击
+        if (nearestTarget) {
+            rotateToTarget(nearestTarget);
+            shootBulletAtMonster(nearestTarget);
+
+            // 重置计时器
+            timeSinceLastAttack = 0.0f;
+        }
+    }
+}
+
+
 
 /*
 void Tower::extractTypeInfo() {

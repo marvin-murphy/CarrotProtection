@@ -3,7 +3,7 @@
 
 #include "cocos2d.h"
 #include "Carrot.h"
-
+#include "move.h"
 
 USING_NS_CC;
 
@@ -12,15 +12,35 @@ class Monster : public cocos2d::Sprite
 public:
     // Monster类构造函数
     Monster(std::vector<Monster*>* monsters, Carrot* targetCarrot)
-        : monstersPtr(monsters), carrotPtr(targetCarrot), health(15), level(1), type(1), hit(1) {
-        // 其他初始化代码
-    }
+        : state(State::Alive), // 初始化状态为Alive
+        monstersPtr(monsters),
+        carrotPtr(targetCarrot),
+        health(100), // 假设初始血量为100
+        level(1),
+        type(1),
+        hit(1) {
 
+        // 创建血量标签并设置初始文本
+        std::string initialLabelText = "Health: " + std::to_string(health);
+        healthLabel = cocos2d::Label::createWithSystemFont(initialLabelText, "Arial", 24);
+        if (healthLabel) {
+            healthLabel->setPosition(Vec2(0, 50)); // 设置相对于怪物的位置
+            this->addChild(healthLabel); // 将标签添加为怪物的子节点
+        }
+
+        // ... 其他初始化代码，比如怪物的图像、动画等...
+    }
+    GameLayer* parentLayer = nullptr;
     // 初始化方法声明
+
+    enum class State { Alive, Dead }; // 状态枚举
+
+    State state; // 当前状态
+
     bool monster_init(int type);
 
     // 生成方法声明
-    Monster* monster_create(int type, Carrot* carrot, std::vector<Monster*>* monstersContainer);
+   static Monster* monster_create(int type, Carrot* carrot, std::vector<Monster*>* monstersContainer);
 
     void setMonstersContainer(std::vector<Monster*>* monsters) {
         monstersPtr = monsters;
@@ -34,6 +54,9 @@ public:
     bool Monster::isAlive() const {
         return health > 0;
     }
+    void updateHealthLabel();
+
+    void update(float dt) override; // 重写update函数以更新标签位置
 
 
     // 获取血量的方法
@@ -93,6 +116,7 @@ private:
    // int y;
     std::vector<Monster*>* monstersPtr;// 指向怪物容器的指针
     Carrot* carrotPtr;                   // 指向Carrot对象的指针
+    cocos2d::Label* healthLabel; // 血量标签
 };
 
 #endif
