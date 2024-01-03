@@ -161,7 +161,7 @@ void SelectScene::scroll()
 
 }
 
-/* 监听页面变化，更新关卡状态 */
+
 void SelectScene::updateMapState(int pageIndex)
 {
     // 获取屏幕大小
@@ -172,6 +172,7 @@ void SelectScene::updateMapState(int pageIndex)
 
     /* 对地图的透明度进行更新 */
     for (auto& item : pageView->getChildren()) {
+        //返回的是Node类，需要转换成Layout或者ImageView类
         auto layout = dynamic_cast<ui::Layout*>(item);
         auto mapImage = dynamic_cast<ui::ImageView*>(layout->getChildByTag(TAG_MAP_IMAGE));
         // 根据是否是当前页面来设置透明度
@@ -181,11 +182,6 @@ void SelectScene::updateMapState(int pageIndex)
         if (isLock) {
             auto lock = dynamic_cast<ui::ImageView*>(layout->getChildByTag(TAG_LOCK_IMAGE));
             lock->setOpacity(layout->getTag() == (TAG_MAP_1 + pageIndex) ? 255 : 50);
-        }
-        // finish的透明度变化
-        if (isFinish) {
-            auto finish = dynamic_cast<ui::ImageView*>(layout->getChildByTag(TAG_FINISH_IMAGE));
-            finish->setOpacity(layout->getTag() == (TAG_MAP_1 + pageIndex) ? 255 : 50);
         }
     }
 
